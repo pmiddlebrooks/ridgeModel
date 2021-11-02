@@ -1,4 +1,13 @@
-function delayDec_RegressModel(cPath,Animal,Rec,dType)
+
+%function delayDec_RegressModel(cPath,Animal,Rec,dType)
+
+addpath('C:\Data\churchland\ridgeModel\smallStuff');
+addpath('C:\Data\churchland\ridgeModel\widefield');
+cPath = 'X:\Widefield'
+Animal = 'mSM63'
+Rec = '20-Jul-2018'
+dType = 'Widefield'
+
 
 if ~strcmpi(cPath(end),filesep)
     cPath = [cPath filesep];
@@ -26,13 +35,13 @@ sPath = ['\\grid-hs\churchland_nlsas_data\data\BpodImager\Animals\' Animal files
 % sPath = ['/sonas-hs/churchland/hpc/home/space_managed_data/BpodImager/Animals/' Animal filesep Paradigm filesep Rec filesep]; %server data path. not used on hpc.
 preStimDur = ceil(1.8*sRate) / sRate; % Duration of trial before lever grab in seconds
 postStimDur = ceil(4.5*sRate) / sRate; % Duration of trial after lever grab onset in seconds
-frames = round((preStimDur + postStimDur) * sRate); %nr of frames per trial
+frames = round((preStimDur + postStimDur) * sRate); %nr of frames per trial (should be 189 frames per trial -Max)
 trialDur = (frames * (1/sRate)); %duration of trial in seconds
 
 %other variables
 mPreTime = ceil(0.5*sRate) / sRate;  % precede motor events to capture preparatory activity in seconds
 mPostTime = ceil(2*sRate) / sRate;   % follow motor events for mPostStim in seconds
-motorIdx = [-((mPreTime * sRate): -1 : 1) 0 (1:(mPostTime * sRate))]; %index for design matrix to cover pre- and post motor action
+motorIdx = [-((mPreTime * sRate): -1 : 1) 0 (1:(mPostTime * sRate))]; %index for design matrix to cover pre- and post motor action. 0 is where the event occurred. 
 tapDur = 0.1;      % minimum time of lever contact, required to count as a proper grab.
 leverMoveDur = 0.25; %duration of lever movement. this is used to orthogonalize video against lever movement.
 leverMoveDur = ceil(leverMoveDur * sRate); %convert to frames
@@ -60,7 +69,7 @@ if strcmpi(dType,'Widefield')
     end
     
     load([cPath 'mask.mat'], 'mask')
-    load([cPath 'Vc.mat'], 'Vc', 'U', 'trials')
+    load([cPath 'Vc.mat'], 'Vc', 'U', 'trials') %load up imaging data. ("trials" gives the indices from the SessionData that have good imaging data -Max) 
     dims = size(Vc,1);
     
     Vc = Vc(1:dims,:,:);
@@ -91,7 +100,7 @@ elseif strcmpi(dType,'twoP')
     dims = size(data.dFOF,1); %dims is now # of neurons instead
 end
 
-bhv = selectBehaviorTrials(SessionData,bTrials); %only use completed trials that are in the Vc dataset
+bhv = selectBehaviorTrials(SessionData,bTrials); %only use completed trials that are in the Vc dataset. (bhv is just SessionData with the indices we want to use -Max)
 trialCnt = length(bTrials);
 
 %% load behavior data
@@ -119,9 +128,9 @@ if exist([cPath 'BehaviorVideo' filesep 'SVD_CombinedSegments.mat'],'file') ~= 2
 end
 
 load([cPath 'BehaviorVideo' filesep 'SVD_CombinedSegments.mat'],'vidV'); %load behavior video data
-V1 = vidV(:,1:bhvDimCnt); %behavioral video regressors
+V1 = vidV(:,1:bhvDimCnt); %behavioral video regressors (grabbing first 200 dimensions -Max)
 load([cPath 'BehaviorVideo' filesep 'motionSVD_CombinedSegments.mat'],'vidV'); %load abs motion video data
-V2 = vidV(:,1:bhvDimCnt); % motion regressors
+V2 = vidV(:,1:bhvDimCnt); % motion regressors (grabbing first 20 dimensions -Max)
 
 load([cPath 'BehaviorVideo' filesep 'FilteredPupil.mat'], 'pTime', 'fPupil', 'sPupil', 'whisker', 'faceM', 'bodyM', 'nose', 'bTime'); %load pupil data
 %check if timestamps from pupil data are shifted against bhv data
@@ -210,12 +219,12 @@ for iTrials = 1:trialCnt
     end
     
     if ~isnan(bhv.RawEvents.Trial{iTrials}.States.Reward(1)) %check for reward state
-        water(iTrials) = bhv.RawEvents.Trial{iTrials}.States.Reward(1) - stimGrab(iTrials);
+        water(iTrials) = bhv.RawEvents.Trial{iTrials}.States.Reward(1) - stimGrab(iTrials); %if no water was given, water(trial) = NaN
     end
 end
 
 maxStimRegs = length(min(round((preStimDur + stimTime) * sRate)) : (preStimDur + postStimDur) * sRate); %maximal number of required stimulus regressors
-maxSpoutRegs = length(min(round((preStimDur + spoutTime) * sRate)) : (preStimDur + postStimDur) * sRate); %maximal number of required stimulus regressors
+maxSpoutRegs = length(min(round((preStimDur + spoutTime) * sRate)) : (preStimDur + postStimDur) * sRate); %maximal number of required spout regressors
 
 %% build regressors - create design matrix based on event times
 %basic time regressors
@@ -262,8 +271,8 @@ for iTrials = 1:trialCnt
     stimIdx = round((preStimDur + stimTime(iTrials)) * sRate) : round((preStimDur + postStimDur) * sRate); %index for which part of the trial should be covered by stim regressors
        
     % vision
-    lVisStimR{iTrials} = false(frames, maxStimRegs);
-    rVisStimR{iTrials} = false(frames, maxStimRegs);
+    lVisStimR{iTrials} = false(frames, maxStimRegs); %initialize array of zeros
+    rVisStimR{iTrials} = false(frames, maxStimRegs); %initialize array of zeros
     if bhv.StimType(iTrials) == 1 || bhv.StimType(iTrials) == 3 %visual or mixed stimulus
         if bhv.CorrectSide(iTrials) == 1
             lVisStimR{iTrials}(:, 1:length(stimIdx)) = timeR(:, stimIdx);
@@ -273,8 +282,8 @@ for iTrials = 1:trialCnt
     end
     
     % audio
-    lAudStimR{iTrials} = false(frames, maxStimRegs);
-    rAudStimR{iTrials} = false(frames, maxStimRegs);
+    lAudStimR{iTrials} = false(frames, maxStimRegs); %initialize array of zeros
+    rAudStimR{iTrials} = false(frames, maxStimRegs); %initialize array of zeros
     if bhv.StimType(iTrials) == 2 || bhv.StimType(iTrials) == 3 %auditory or mixed stimulus
         if bhv.CorrectSide(iTrials) == 1
             lAudStimR{iTrials}(:, 1:length(stimIdx)) = timeR(:, stimIdx);
@@ -557,7 +566,7 @@ end
 
 V1 = reshape(V1,205,[],bhvDimCnt); %get to trial format
 V2 = reshape(V2,205,[],bhvDimCnt); %get to trial format
-vidR = V1(:,bTrials,:); clear V1 %get correct trials from behavioral video data.
+vidR = V1(:,bTrials,:); clear V1 %get correct trials from behavioral video data. (Correct does not mean correct choice -Max)
 moveR = V2(:,bTrials,:); clear V2 %get correct trials from behavioral video data.
 
 % re-align video data
@@ -950,5 +959,5 @@ for iFolds = 1:ridgeFolds
     end
 end
 end
-end
+%end
 
