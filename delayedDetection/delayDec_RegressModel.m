@@ -1,11 +1,13 @@
 
 %function delayDec_RegressModel(cPath,Animal,Rec,dType)
-
+clear all;
 addpath('C:\Data\churchland\ridgeModel\smallStuff');
 addpath('C:\Data\churchland\ridgeModel\widefield');
 cPath = 'X:\Widefield'
-Animal = 'mSM63'
-Rec = '20-Jul-2018'
+%Animal = 'mSM63'
+%Rec = '20-Jul-2018'
+Animal = 'mSM66'
+Rec = '28-Aug-2018'
 dType = 'Widefield'
 
 
@@ -656,13 +658,24 @@ StimulusMoveR = cat(1,StimulusMoveR{:});
 WaitMoveR = cat(1,WaitMoveR{:});
 
 %% create full design matrix
+% fullR = [timeR ChoiceR rewardR lGrabR lGrabRelR rGrabR rGrabRelR lLickR rLickR lVisStimR rVisStimR lAudStimR rAudStimR ...
+%     prevRewardR prevChoiceR prevModR waterR piezoR whiskR noseR fastPupilR slowPupilR faceR bodyR BaselineMoveR HandleMoveR StimulusMoveR WaitMoveR moveR vidR];
+% 
+% % labels for different regressor sets. It is REALLY important this agrees with the order of regressors in fullR.
+% recLabels = {
+%     'time' 'Choice' 'reward' 'lGrab' 'lGrabRel' 'rGrab' 'rGrabRel' 'lLick' 'rLick' 'lVisStim' 'rVisStim' ...
+%     'lAudStim' 'rAudStim' 'prevReward' 'prevChoice' 'prevMod' 'water' 'piezo' 'whisk' 'nose' 'fastPupil' 'slowPupil' 'face' 'body' 'BaselineMove' 'HandleMove' 'StimulusMove' 'WaitMove' 'Move' 'bhvVideo'};
+
+%% Max Mods
+
 fullR = [timeR ChoiceR rewardR lGrabR lGrabRelR rGrabR rGrabRelR lLickR rLickR lVisStimR rVisStimR lAudStimR rAudStimR ...
-    prevRewardR prevChoiceR prevModR waterR piezoR whiskR noseR fastPupilR slowPupilR faceR bodyR BaselineMoveR HandleMoveR StimulusMoveR WaitMoveR moveR vidR];
+    prevRewardR prevChoiceR prevModR piezoR whiskR noseR fastPupilR slowPupilR faceR bodyR BaselineMoveR HandleMoveR StimulusMoveR WaitMoveR moveR vidR];
 
 % labels for different regressor sets. It is REALLY important this agrees with the order of regressors in fullR.
 recLabels = {
     'time' 'Choice' 'reward' 'lGrab' 'lGrabRel' 'rGrab' 'rGrabRel' 'lLick' 'rLick' 'lVisStim' 'rVisStim' ...
-    'lAudStim' 'rAudStim' 'prevReward' 'prevChoice' 'prevMod' 'water' 'piezo' 'whisk' 'nose' 'fastPupil' 'slowPupil' 'face' 'body' 'BaselineMove' 'HandleMove' 'StimulusMove' 'WaitMove' 'Move' 'bhvVideo'};
+    'lAudStim' 'rAudStim' 'prevReward' 'prevChoice' 'prevMod' 'piezo' 'whisk' 'nose' 'fastPupil' 'slowPupil' 'face' 'body' 'BaselineMove' 'HandleMove' 'StimulusMove' 'WaitMove' 'Move' 'bhvVideo'};
+%%
 
 %index to reconstruct different response kernels
 recIdx = [
