@@ -35,7 +35,7 @@ Paradigm = 'SpatialDisc';
 cPath = [cPath Animal filesep Paradigm filesep Rec filesep]; %Widefield data path
 sPath = ['\\grid-hs\churchland_nlsas_data\data\BpodImager\Animals\' Animal filesep Paradigm filesep Rec filesep]; %server data path. not used on hpc.
 % sPath = ['/sonas-hs/churchland/hpc/home/space_managed_data/BpodImager/Animals/' Animal filesep Paradigm filesep Rec filesep]; %server data path. not used on hpc.
-preStimDur = ceil(1.8*sRate) / sRate; % Duration of trial before lever grab in seconds
+preStimDur = ceil(1.8*sRate) / sRate; % Duration of trial before lever grab in seconds (shouldn't this be stim time, not lever grab time? -max)
 postStimDur = ceil(4.5*sRate) / sRate; % Duration of trial after lever grab onset in seconds
 frames = round((preStimDur + postStimDur) * sRate); %nr of frames per trial (should be 189 frames per trial -Max)
 trialDur = (frames * (1/sRate)); %duration of trial in seconds
@@ -527,7 +527,7 @@ rGrabR = delayDec_analogToDesign(rGrabR, 0.5, trialCnt, sRate, sRate, motorIdx, 
 temp = double(cat(1,fastPupilR{:}));
 temp = (temp - prctile(temp,1))./ nanstd(temp); %minimum values are at 0, signal in standard deviation units
 [dMat, traceOut] = delayDec_analogToDesign(temp, median(temp), trialCnt, sRate, sRate, motorIdx, gaussShift);
-temp = [single(traceOut) cat(1,dMat{:})]; %rebuild continuous format
+temp = [single(traceOut) cat(1,dMat{:})]; %rebuild continuous format (This adds the continuous data as the first index, and then the rest of the indices are the kernel matrix (so 77 instead of 76 indices in this case) -max)
 [dMat, ~] = delayDec_analogToDesign(traceOut, prctile(traceOut,75), trialCnt, sRate, sRate, motorIdx, gaussShift);
 fastPupilR = [temp cat(1,dMat{:})]; %add high amplitude movements separately
 
