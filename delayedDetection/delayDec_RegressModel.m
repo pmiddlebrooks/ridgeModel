@@ -132,7 +132,7 @@ end
 load([cPath 'BehaviorVideo' filesep 'SVD_CombinedSegments.mat'],'vidV'); %load behavior video data
 V1 = vidV(:,1:bhvDimCnt); %behavioral video regressors (grabbing first 200 dimensions -Max)
 load([cPath 'BehaviorVideo' filesep 'motionSVD_CombinedSegments.mat'],'vidV'); %load abs motion video data
-V2 = vidV(:,1:bhvDimCnt); % motion regressors (grabbing first 20 dimensions -Max)
+V2 = vidV(:,1:bhvDimCnt); % motion regressors (grabbing first 200 dimensions -Max)
 
 load([cPath 'BehaviorVideo' filesep 'FilteredPupil.mat'], 'pTime', 'fPupil', 'sPupil', 'whisker', 'faceM', 'bodyM', 'nose', 'bTime'); %load pupil data
 %check if timestamps from pupil data are shifted against bhv data
