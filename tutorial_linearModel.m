@@ -89,6 +89,7 @@ end
 % save([fPath filesep 'regData.mat'], 'fullR', 'regIdx', 'regLabels','fullQRR','-v7.3'); %save some model variables
 
 %% fit model to imaging data
+addpath('widefield\')
 [ridgeVals, dimBeta] = ridgeMML(Vc', fullR, true); %get ridge penalties and beta weights.
 % save([fPath 'dimBeta.mat'], 'dimBeta', 'ridgeVals'); %save beta kernels
 

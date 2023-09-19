@@ -32,8 +32,8 @@ for iRegs = 1 : length(eventType)
         % create full design matrix
         cIdx = bsxfun(@plus,find(trace),kernelIdx);
         cIdx(cIdx < 1) = 0;
-        cIdx(cIdx > frames) = frames;
-        cIdx = bsxfun(@plus,cIdx,(0:frames:frames*length(kernelIdx)-1));
+        cIdx(cIdx > frames) = frames; 
+        cIdx = bsxfun(@plus,cIdx,(0:frames:frames*length(kernelIdx)-1));  % gets the indices of each successive frame's regressor (creates an eye(size(kernel)))
         cIdx(cIdx < 1) = frames;
         cIdx(cIdx > (frames * length(kernelIdx))) = frames * length(kernelIdx);
         
@@ -44,7 +44,7 @@ for iRegs = 1 : length(eventType)
         
     end
     fullMat{iRegs} = cat(1, dMat{:}); %combine all trials
-    cIdx = sum(fullMat{iRegs},1) > 0; %don't use empty regressors
+    cIdx = sum(fullMat{iRegs},1) > 0; %don't use empty regressors: sometimes the stimulus 
     fullMat{iRegs} = fullMat{iRegs}(:,cIdx);
     eventIdx{iRegs} = repmat(iRegs,sum(cIdx),1); %keep index on how many regressor were created
 end
