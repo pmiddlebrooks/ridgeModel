@@ -158,7 +158,9 @@ if ~isnan(cRange)
     handles.MaxColor.String = num2str(round(double(max(cRange(2))),4));
 end
 
-colormap(handles.FrameImage,strtrim(handles.pickColormap.String{handles.pickColormap.Value}));
+colormap('jet')
+colormap(viridis)
+% colormap(handles.FrameImage,strtrim(handles.pickColormap.String{handles.pickColormap.Value}));
 handles.areaProp.String = fieldnames(regionprops(1,'all')); %get area properties
 handles.areaProp.Value = 1; %set 1 as default (should be 'area')
 

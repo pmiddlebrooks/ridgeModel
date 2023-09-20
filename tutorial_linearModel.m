@@ -102,9 +102,17 @@ corrMat = corrMat(:, 1:size(allenMask,2));
 
 %% check beta kernels
 % select variable of interest. Must be included in 'regLabels'.
+% taskLabels = {'time' 'lVisStim' 'rVisStim' 'Choice' 'prevReward'}; %some task variables
+% moveLabels = {'lGrab' 'rGrab' 'lLick' 'rLick' 'nose' 'whisk'}; %some movement variables
+
 cVar = 'rVisStim';
-% cVar = 'rGrab';
-% cVar = 'whisk';
+cVar = 'lVisStim';
+cVar = 'rGrab';
+cVar = 'lGrab';
+cVar = 'whisk';
+% cVar = 'Choice';
+% cVar = 'lLick';
+% 
 
 % find beta weights for current variable
 cIdx = regIdx == find(ismember(regLabels,cVar));
