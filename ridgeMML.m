@@ -148,6 +148,7 @@ if computeL
   convergenceFailures = false(1, pY);
   for i = 1:pY
     [L(i), flag] = ridgeMMLOneY(q, d2, n, YVar(i), alpha2(:, i));
+    % fprintf('neuron %d\t lambda %.2e\t convergence: %d\n',i, L(i), convergenceFailures(i))
     convergenceFailures(i) = (flag < 1);
   end
   

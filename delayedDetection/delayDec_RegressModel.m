@@ -1,14 +1,24 @@
 
 %function delayDec_RegressModel(cPath,Animal,Rec,dType)
 clear all;
-addpath('C:\Data\churchland\ridgeModel\smallStuff');
-addpath('C:\Data\churchland\ridgeModel\widefield');
-cPath = 'X:\Widefield'
+% addpath('C:\Data\churchland\ridgeModel\smallStuff');
+% addpath('C:\Data\churchland\ridgeModel\widefield');
+% cPath = 'X:\Widefield'
 %Animal = 'mSM63'
 %Rec = '20-Jul-2018'
-Animal = 'mSM66'
-Rec = '28-Aug-2018'
-dType = 'Widefield'
+% Animal = 'mSM66';
+% Rec = '28-Aug-2018';
+% dType = 'Widefield'
+
+
+
+% PGM
+addpath('E:/Projects/sandbox/ridgeModel/smallStuff/');
+addpath('E:/Projects/sandbox/ridgeModel/widefield/');
+cPath = 'E:/Projects/sandbox/ridgeModel/widefield/';
+Animal = 'mSM43'; %example animal
+Rec = '23-Nov-2017'; %example recording
+
 
 
 if ~strcmpi(cPath(end),filesep)

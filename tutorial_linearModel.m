@@ -10,6 +10,9 @@
 % from the CSHL repository, under http://repository.cshl.edu/38599/. 
 % Download the data folder 'Widefield' and navigate to its location in Matlab.
 
+%%
+cd('E:/Projects/sandbox/ridgeModel/')
+
 %% get some data from example recording
 animal = 'mSM43'; %example animal
 rec = '23-Nov-2017'; %example recording
@@ -89,10 +92,12 @@ end
 % save([fPath filesep 'regData.mat'], 'fullR', 'regIdx', 'regLabels','fullQRR','-v7.3'); %save some model variables
 
 %% fit model to imaging data
+tic
 addpath('widefield\')
 [ridgeVals, dimBeta] = ridgeMML(Vc', fullR, true); %get ridge penalties and beta weights.
 % save([fPath 'dimBeta.mat'], 'dimBeta', 'ridgeVals'); %save beta kernels
-
+toc
+%%
 %reconstruct imaging data and compute R^2
 Vm = (fullR * dimBeta)';
 corrMat = modelCorr(Vc,Vm,U) .^2; %compute explained variance
@@ -132,6 +137,7 @@ fullMat = arrayShrink(fullMat,mask,'split'); %recreate full frame
 fullMat = alignAllenTransIm(fullMat,opts.transParams); %align to allen atlas
 fullMat = fullMat(:, 1:size(allenMask,2));
 
+%%
 %task model alone - this will take a moment
 [Vtask, taskBeta, taskR, taskIdx, taskRidge, taskLabels] = crossValModel(fullR, Vc, taskLabels, regIdx, regLabels, opts.folds);
 save([fPath 'cvTask.mat'], 'Vtask', 'taskBeta', 'taskR', 'taskIdx', 'taskRidge', 'taskLabels'); %save some results
@@ -141,6 +147,7 @@ taskMat = arrayShrink(taskMat,mask,'split'); %recreate task frame
 taskMat = alignAllenTransIm(taskMat,opts.transParams); %align to allen atlas
 taskMat = taskMat(:, 1:size(allenMask,2));
 
+%%
 %movement model alone - this will take a moment
 [Vmove, moveBeta, moveR, moveIdx, moveRidge, moveLabels] = crossValModel(fullR, Vc, moveLabels, regIdx, regLabels, opts.folds);
 save([fPath 'cvMove.mat'], 'Vmove', 'moveBeta', 'moveR', 'moveIdx', 'moveRidge', 'moveLabels'); %save some results

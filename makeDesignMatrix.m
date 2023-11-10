@@ -29,6 +29,8 @@ for iRegs = 1 : length(eventType)
         % Get the zero lag regressor.
         trace = logical(events(:,iTrials,iRegs));
         
+        cIdx = [];
+        if sum(trace)
         % create full design matrix
         cIdx = bsxfun(@plus,find(trace),kernelIdx);
         cIdx(cIdx < 1) = 0;
@@ -36,15 +38,15 @@ for iRegs = 1 : length(eventType)
         cIdx = bsxfun(@plus,cIdx,(0:frames:frames*length(kernelIdx)-1));  % gets the indices of each successive frame's regressor (creates an eye(size(kernel)))
         cIdx(cIdx < 1) = frames;
         cIdx(cIdx > (frames * length(kernelIdx))) = frames * length(kernelIdx);
-        
+        end
         dMat{iTrials} = false(frames, length(kernelIdx));
         dMat{iTrials}(cIdx(:)) = true;
         dMat{iTrials}(end,:) = false; %don't use last timepoint of design matrix to avoid confusion with indexing.
         dMat{iTrials}(end,2:end) = dMat{iTrials}(end-1,1:end-1); %replace with shifted version of previous timepoint
         
     end
-    fullMat{iRegs} = cat(1, dMat{:}); %combine all trials
-    cIdx = sum(fullMat{iRegs},1) > 0; %don't use empty regressors: sometimes the stimulus 
+    fullMat{iRegs} = cat(1, dMat{:}); % combine all trials
+    cIdx = sum(fullMat{iRegs},1) > 0; % don't use empty regressors: sometimes the stimulus 
     fullMat{iRegs} = fullMat{iRegs}(:,cIdx);
     eventIdx{iRegs} = repmat(iRegs,sum(cIdx),1); %keep index on how many regressor were created
 end
